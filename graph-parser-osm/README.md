@@ -1,11 +1,27 @@
 # osm-graph-parser
-![travis](https://travis-ci.org/rovaniemi/osm-graph-parser.svg?branch=master)
-[![Code Coverage](https://img.shields.io/codecov/c/github/rovaniemi/osm-graph-parser/master.svg)](https://codecov.io/github/rovaniemi/osm-graph-parser)
-[![License: GPL v3](https://img.shields.io/aur/license/yaourt.svg)](https://github.com/rovaniemi/osm-graph-parser/blob/master/LICENSE)
 
 Java program that parses OSM XML files into a json graph representation. 
 
-## Example
+### How to run
+- Java Runtime Environment needed. Instructions to download can be found [here](https://ubuntu.com/tutorials/install-jre#1-overview).
+
+- From the link choose `Linux x64 Compressed Archive (jre-8u291-linux-x64.tar.gz)` to download on step 3 (or change according to your need).
+
+- Download data (.osm file) of the respective area from [OpenStreetMap](https://www.openstreetmap.org/). (Export->Select Area->Export)
+
+- Note: The downloaded .osm file should be in the parent directory (same as jar file).
+
+- Change & run the following command on terminal:
+```
+java -jar <jar-file-name>.jar -f files -i selected ways -o output file name
+```
+
+Command used for this project: 
+```
+java -jar osmparser-0.13.jar -f map.osm -i highway -o graph.json
+```
+
+## Overview of Json file
 
 In output file you will have nodes and edges with weight (unit: `centimetres`).
 ```json
@@ -64,35 +80,15 @@ In output file you will have nodes and edges with weight (unit: `centimetres`).
 -q, --quiet           suppress console output
 ```
 
-## Getting Started
-
-1. [Download](https://github.com/rovaniemi/osm-graph-parser/releases) latest version under the releases tab.
-2. [Download](https://www.openstreetmap.org/) openstreetmap data. (click export, select area, and then export)
-3. Use -f flag to select osm files.
-4. Use -i flag to select ways. You can view osm map features [here.](http://wiki.openstreetmap.org/wiki/Map_Features)
-5. Use -o flag to defining output file name.
-6. Run the jar file. (terminal `java -jar <jar-file-name>.jar -f files -i selected ways -o output file name`)
-7. Now you have `json` in the same directory where the .jar file is.
-8. If you use this data in your own service read [openstreetmap licence.](https://opendatacommons.org/licenses/odbl/1.0/)
-
 ### Possible errors
 
 1. Parsing take much time or program crash.
     - The program does not have enought memory. Use `-Xmx` flag with java. Example run command `java -jar -Xmx4096m <jar-file-name>.jar`. That will increase java heap max size to 4gb. You will need 4gb ram for that. 
 
-### Prerequisites
-
-You will need a Java Runtime Environment (JRE) to run java programs. You can download it [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).
-
 ## Built With
 
 * [Gradle](https://gradle.org) - Dependency Management
 
-## Authors
+## Reference
 
-* **Mauri Karlin** - *Owner* - [Rovaniemi](https://github.com/Rovaniemi)
-* **Joona Heikkilä** - Optimizations and refactorings - [cxcorp](https://github.com/cxcorp)
-
-## License
-
-This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE](LICENSE) file for details
+* GitHub link: [osm-graph-parser](https://github.com/rovaniemi/osm-graph-parser)
