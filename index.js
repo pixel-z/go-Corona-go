@@ -6,7 +6,7 @@ const axios = require('axios')
 const {
     Heap
 } = require('heap-js');
-var graph = require('./data/graph.json');
+const graph = require('./data/graph.json');
 const {
     start
 } = require('repl');
@@ -80,10 +80,14 @@ function getSafestPath(inds, inde) {
     // Generate Safest Path from parents array
     var finalpath = [];
     var curr = inde;
-    finalpath.push(curr);
+    finalpath.push([
+        graph[curr].lo , graph[curr].la
+    ]);
     while (parent[curr] != -1) {
         curr = parent[curr];
-        finalpath.push(curr);
+        finalpath.push([
+            graph[curr].lo , graph[curr].la
+        ]);
     }
     finalpath.reverse();
     console.log(finalpath);
@@ -111,19 +115,17 @@ function generateWeight(g) {
 }
 
 
-function getNearestNode(lo, la) {
-    var mn_dist = 10000000000.0;
-    var ind = null;
+function getNearestNode(la, lo) {
+    let mn_dist = 19007199254740991;
+    let ind = 0;
     for (var i = 0; i < graph.length; i++) {
         var g = graph[i];
-        // console.log(lo);
         var sum = getDistanceFromLatLonInKm(g.la, g.lo, la, lo);
         
         if (sum < mn_dist) {
             mn_dist = sum;
             ind = i;
         }
-        console.log(mn_dist);
     }
     return ind;
 }
