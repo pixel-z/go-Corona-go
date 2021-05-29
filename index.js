@@ -96,7 +96,19 @@ function getSafestPath(inds, inde) {
 
 
 function generateWeight(g) {
-    // console.log(g);
+    var riskValue = [];
+    population = getRandomCrowd(28.6213,28.6680,77.1412,77.2135,1000);
+    for(var i = 0; i < graph.length; i++)
+    {
+        var g_ = graph[i];
+        var curr_risk = 0;
+        for(var j=0;j<1000;j++)
+        {
+            curr_risk += getDistanceFromLatLonInKm(g_.la,g_.lo,population[j].la,population[j].lo);
+        }
+        riskValue.push(curr_risk);
+    }
+    console.log(riskValue);
     var newGraph = [];
     lambda = 0.01 // Change this accordingly
     for (var i = 0; i < Object.keys(g).length; i++) {
@@ -105,7 +117,7 @@ function generateWeight(g) {
         for (var j = 0; j < Object.keys(child).length; j++) {
             adjlist.push({
                 'i': child[j].i,
-                'w': lambda * child[j].w + 0 //Write the risk factor here 
+                'w': lambda * child[j].w + riskValue[j]//Write the risk factor here 
             })
         }
         newGraph.push(adjlist);
@@ -146,3 +158,27 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 function deg2rad(deg) {
     return deg * (Math.PI / 180)
 } 
+
+app.get('/pop',(req,res)=>{
+    getRandomCrowd(28.6213,28.6680,77.1412,77.2135,100);
+    res.send('ok');
+})
+
+function getRandomCrowd(la_min,la_max,lo_min,lo_max,population_size)
+{
+    var population = [];
+    for(var i=0;i<population_size;i++)
+    {
+        population.push({
+            'la': randLoc(la_min,la_max),
+            'lo': randLoc(lo_min,lo_max)
+        });
+    }
+    // console.log(population);
+    return population;
+    
+}
+
+function randLoc(min, max) {
+    return Math.random() * (max - min) + min;
+}
