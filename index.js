@@ -30,29 +30,30 @@ app.post('/getpath', async (req, res) => {
     var start_lo = req.body.start_lo;
     var end_la = req.body.end_la
     var end_lo = req.body.end_lo;
-    console.log(req.body);
+    // console.log(req.body);
     var inds = getNearestNode(start_la, start_lo);
+    var inde = getNearestNode(end_la, end_lo);
     console.log(inds);
+    console.log(inde);
     start_la = graph[inds].la;
     start_lo = graph[inds].lo;
 
-    var inde = getNearestNode(end_la, end_lo);
+
     end_la = graph[inde].la;
     end_lo = graph[inde].lo;
 
-    path = getSafestPath(inds,inde);
+    path = getSafestPath(inds, inde);
 
     res.send(path);
 })
 
-function getSafestPath(inds,inde)
-{
+function getSafestPath(inds, inde) {
     newgraph = generateWeight(graph);
     const customPriorityComparator = (a, b) => a.dist - b.dist;
     var parent = new Array(6000).fill(-1);
     var dist = new Array(6000).fill(1000000000000);
     const pq = new Heap(customPriorityComparator);
-    var start = 0;
+    var start = inds;
     pq.push({
         'dist': 0,
         'i': start
@@ -80,8 +81,7 @@ function getSafestPath(inds,inde)
     var finalpath = [];
     var curr = inde;
     finalpath.push(curr);
-    while(parent[curr]!=-1)
-    {     
+    while (parent[curr] != -1) {
         curr = parent[curr];
         finalpath.push(curr);
     }
@@ -106,31 +106,41 @@ function generateWeight(g) {
         }
         newGraph.push(adjlist);
     }
-    
+
     return newGraph;
 }
 
 
 function getNearestNode(lo, la) {
-    var mn_dist = 10000000000;
+    var mn_dist = 10000000000.0;
     var ind = null;
     for (var i = 0; i < graph.length; i++) {
         var g = graph[i];
         // console.log(lo);
-        var sum = distance([g.lo, g.la],[lo,la]);
-        // console.log(sum);
+        var sum = getDistanceFromLatLonInKm(g.la, g.lo, la, lo);
+        
         if (sum < mn_dist) {
             mn_dist = sum;
             ind = i;
         }
+        console.log(mn_dist);
     }
     return ind;
 }
 
-// function euclideanDistance(p, p2) {
-//     xdiff = Math.pow((p - p2), 2);
-//     ydiff = Math.pow((p- p2, 2));
-//     console.log(xdiff);
-//     return Math.sqrt(xdiff + ydiff)
-// }
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+}
 
+function deg2rad(deg) {
+    return deg * (Math.PI / 180)
+} 
