@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+    <meta charset="utf-8">
+    <title>Simulation</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    Add a line to a map using a GeoJSON source
+    <div class="container">
+        <form id="getpath" action="/getpath" method="POST">
+            <label for="start_la">Start Latitude</label>
+            <input name="start_la" type="text" value="26.409888"/>
+            <label for="start_lo">Start Longitude</label>
+            <input name="start_lo" type="text" value="80.379450"/>
+            <br>
+            <label for="end_la">End Latitude</label>
+            <input name="end_la" type="text" value="26.410349"/>
+            <label for="end_lo">End Longitude</label>
+            <input name="end_lo" type="text" value="80.383315"/>
+            <br>
+            <button type="submit" form="getpath" > Submit </button>
+        </form>
+
+        <div id="map" style="height: 500px; width: 500px; margin:auto;"></div>
+    </div>
+    <script>
+
+        mapboxgl.accessToken =
+            'pk.eyJ1Ijoic2hhYW50YW51MzE0IiwiYSI6ImNrcDlmOHI0dDBmcHYycHQ3eTY2Mjl6MncifQ.pE8Tb0dlKLdmtz9jg2qe8w';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-122.486052, 37.830348],
+            zoom: 15
+        });
+
+        map.on('load', function () {
+            map.addSource('route', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'Feature',
+                    'properties': {},
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': [
+                            [-122.483696, 37.833818],
+                            [-122.483482, 37.833174],
+                            [-122.483396, 37.8327],
+                            [-122.483568, 37.832056],
+                            [-122.48404, 37.831141],
+                            [-122.48404, 37.830497],
+                            [-122.483482, 37.82992],
+                            [-122.483568, 37.829548],
+                            [-122.48507, 37.829446],
+                            [-122.4861, 37.828802],
+                            [-122.486958, 37.82931],
+                            [-122.487001, 37.830802],
+                            [-122.487516, 37.831683],
+                            [-122.488031, 37.832158],
+                            [-122.488889, 37.832971],
+                            [-122.489876, 37.832632],
+                            [-122.490434, 37.832937],
+                            [-122.49125, 37.832429],
+                            [-122.491636, 37.832564],
+                            [-122.492237, 37.833378],
+                            [-122.493782, 37.833683]
+                        ]
+                    }
+                }
+            });
+            map.addLayer({
+                'id': 'route',
+                'type': 'line',
+                'source': 'route',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                'paint': {
+                    'line-color': '#888',
+                    'line-width': 8
+                }
+            });
+        });
+    </script>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+</html>
