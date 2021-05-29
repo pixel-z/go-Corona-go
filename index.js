@@ -33,8 +33,8 @@ app.post('/getpath', async (req, res) => {
     // console.log(req.body);
     var inds = getNearestNode(start_la, start_lo);
     var inde = getNearestNode(end_la, end_lo);
-    console.log(inds);
-    console.log(inde);
+    // console.log(inds);
+    // console.log(inde);
     start_la = graph[inds].la;
     start_lo = graph[inds].lo;
 
@@ -98,11 +98,12 @@ function getSafestPath(inds, inde) {
  * function: returns net energy received by p1
  */
 function find_angle(p1, p2, source) {
-    a_sq = Math.pow(p1["la"] - p2["la"], 2) + Math.pow(p1["lo"] - p2["lo"], 2)
-    b_sq = Math.pow(p1["la"] - source["la"], 2) + Math.pow(p1["lo"] - source["lo"], 2)
-    c_sq = Math.pow(p2["la"] - source["la"], 2) + Math.pow(p2["lo"] - source["lo"], 2)
-    angle = Math.acos(c_sq + b_sq - a_sq / (2 * Math.sqrt(c_sq) * Math.sqrt(b_sq)))
+    a_sq = Math.pow((p1["la"] - p2["la"])*100000, 2) + Math.pow((p1["lo"] - p2["lo"])*100000, 2)
+    b_sq = Math.pow((p1["la"] - source["la"])*100000, 2) + Math.pow((p1["lo"] - source["lo"])*100000, 2)
+    c_sq = Math.pow((p2["la"] - source["la"])*100000, 2) + Math.pow((p2["lo"] - source["lo"])*100000, 2)
+    angle = Math.acos((c_sq + b_sq - a_sq )/ (2 * Math.sqrt(c_sq) * Math.sqrt(b_sq)))
     net_angle = angle * b_sq / (b_sq + c_sq)
+    // console.log(a_sq,b_sq,c_sq,angle);
     return net_angle;
 }
 
@@ -111,7 +112,7 @@ function generateWeight(g) {
     // population = getRandomCrowd(28.6213, 28.6680, 77.1412, 77.2135, 1000);
     var population = require('./data/infected.json');
     // Power simulation for our infected person
-    var power = 10;
+    var power = 100;
     for (var i = 0; i < graph.length; i++) {
         var g_ = graph[i];
         var curr_risk = 0;
@@ -119,9 +120,13 @@ function generateWeight(g) {
             // curr_risk += getDistanceFromLatLonInKm(g_.la, g_.lo, population[j].la, population[j].lo);
             adj_list_node = g[i].e
             for (var k = 0; k < Object.keys(adj_list_node).length; k++) {
-                coordinates = {"la": graph[adj_list_node[k]].la, "lo": graph[adj_list_node[k]].lo}
+                // console.log(adj_list_node[k]);
+                coordinates = {"la": graph[adj_list_node[k].i].la, "lo": graph[adj_list_node[k].i].lo}
                 curr_risk += find_angle({"la": graph[i].la, "lo": graph[i].lo}, coordinates, population[j]) * power / (Math.PI * 2)
+                
             }
+            // if(i<30)
+            // console.log(curr_risk);
         }
         riskValue.push(curr_risk);
     }
@@ -135,7 +140,7 @@ function generateWeight(g) {
         for (var j = 0; j < Object.keys(child).length; j++) {
             adjlist.push({
                 'i': child[j].i,
-                'w': lambda * child[j].w + riskValue[j] //Write the risk factor here 
+                'w': lambda * child[j].w + riskValue[j] + riskValue[i] //Write the risk factor here 
             })
         }
         newGraph.push(adjlist);
