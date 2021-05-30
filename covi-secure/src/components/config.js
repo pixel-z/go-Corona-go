@@ -1,0 +1,2 @@
+exports.ACCESS_TOKEN =
+  "pk.eyJ1IjoiYjMwd3VsZmZ6IiwiYSI6ImNrNmk0ajloeTMxODgzbW56anoxbGdvY24ifQ.FEssm4xWFRIduaK5vrtWzg";
