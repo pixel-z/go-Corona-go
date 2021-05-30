@@ -52,3 +52,7 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     return d;
 }
 ```
+
+### Locality for which it is tested
+
+![Locality](./map.png)
