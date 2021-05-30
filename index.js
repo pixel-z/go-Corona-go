@@ -10,7 +10,9 @@ const graph = require('./data/graph.json');
 const {
     start
 } = require('repl');
+const cors  = require("cors");
 var distance = require('euclidean-distance')
+var population = require('./data/infected.json');
 
 const port = 3000
 app.listen(port);
@@ -18,6 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }))
+app.use(cors());
 app.set('view engine', 'ejs');
 
 
@@ -33,8 +36,8 @@ app.post('/getpath', async (req, res) => {
     // console.log(req.body);
     var inds = getNearestNode(start_la, start_lo);
     var inde = getNearestNode(end_la, end_lo);
-    // console.log(inds);
-    // console.log(inde);
+    console.log(inds);
+    console.log(inde);
     start_la = graph[inds].la;
     start_lo = graph[inds].lo;
 
@@ -43,13 +46,21 @@ app.post('/getpath', async (req, res) => {
     end_lo = graph[inde].lo;
 
     path = getSafestPath(inds, inde);
-
+    // console.log(population);
     res.send(path);
 })
 
+app.get('/population',(req,res)=>{
+ var pop = [];
+ for(var i=0;i<population.length;i++)
+ {
+    pop.push([population[i].lo,population[i].la]);
+ }
+ res.send(pop);
+})
 function getSafestPath(inds, inde) {
     newgraph = generateWeight(graph);
-    console.log('here');
+    // console.log('here');
     const customPriorityComparator = (a, b) => a.dist - b.dist;
     var parent = new Array(6000).fill(-1);
     var dist = new Array(6000).fill(1000000000000);
@@ -63,7 +74,7 @@ function getSafestPath(inds, inde) {
     while (!pq.isEmpty()) {
         var top = pq.top()[0].i;
         pq.pop();
-        console.log(dist[top]);
+        // console.log(dist[top]);
         for (var i = 0; i < Object.keys(newgraph[top]).length; i++) {
             var child = newgraph[top][i].i;
 
@@ -93,7 +104,7 @@ function getSafestPath(inds, inde) {
         // console.log(curr);
     }
     finalpath.reverse();
-    console.log(finalpath);
+    // console.log(finalpath);
     return finalpath;
 }
 
@@ -145,7 +156,6 @@ function dist_contrib(p1, p2, source) {
 function generateWeight(g) {
     var riskValue = [];
     // population = getRandomCrowd(28.6213, 28.6680, 77.1412, 77.2135, 1000);
-    var population = require('./data/infected.json');
     // Power simulation for our infected person
     var power = 100;
     var closeness = 1000
@@ -198,6 +208,7 @@ function getNearestNode(la, lo) {
             ind = i;
         }
     }
+    console.log(mn_dist);
     return ind;
 }
 
@@ -218,11 +229,7 @@ function deg2rad(deg) {
     return deg * (Math.PI / 180)
 }
 
-app.get('/pop', (req, res) => {
-    getRandomCrowd(28.6213, 28.6680, 77.1412, 77.2135, 100);
-    res.send('ok');
-})
-
+/* not being used here */
 function getRandomCrowd(la_min, la_max, lo_min, lo_max, population_size) {
     var population = [];
     for (var i = 0; i < population_size; i++) {

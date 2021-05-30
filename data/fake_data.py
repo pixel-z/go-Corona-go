@@ -3,7 +3,7 @@ import numpy as np
 from operator import itemgetter
 
 FILE_LOC = "./graph.json"
-NUM = 1000
+NUM = 10000
 
 
 def get_constraints():
@@ -11,7 +11,7 @@ def get_constraints():
         with open(FILE_LOC) as f:
             data = json.load(f)
     except IOError:
-        print(f"Error loading the file {FILE_LOC}! Aborting...")
+        print("Error loading the file ! Aborting...")
     try:
         min_lat = min(map(lambda x: x["la"], data))
         max_lat = max(map(lambda x: x["la"], data))
