@@ -49,6 +49,7 @@ app.post('/getpath', async (req, res) => {
 
 function getSafestPath(inds, inde) {
     newgraph = generateWeight(graph);
+    console.log('here');
     const customPriorityComparator = (a, b) => a.dist - b.dist;
     var parent = new Array(6000).fill(-1);
     var dist = new Array(6000).fill(1000000000000);
@@ -62,6 +63,7 @@ function getSafestPath(inds, inde) {
     while (!pq.isEmpty()) {
         var top = pq.top()[0].i;
         pq.pop();
+        console.log(dist[top]);
         for (var i = 0; i < Object.keys(newgraph[top]).length; i++) {
             var child = newgraph[top][i].i;
 
@@ -88,6 +90,7 @@ function getSafestPath(inds, inde) {
         finalpath.push([
             graph[curr].lo, graph[curr].la
         ]);
+        // console.log(curr);
     }
     finalpath.reverse();
     console.log(finalpath);
@@ -107,12 +110,45 @@ function find_angle(p1, p2, source) {
     return net_angle;
 }
 
+function dist_contrib(p1, p2, source) {
+    // 1m equivalent in terms of latitude
+    var eps = 0
+    var temp = 0.00001
+    var dist = getDistanceFromLatLonInKm(temp, 0, 0, 0) * 1000
+    eps = temp / dist
+    var factor = 100000
+    /*
+     * y - y1 = y2 - y1 / x2 - x1 * ( x - x1 )
+     * (y - y1) * (x2 - x1) = (y2 - y1) * (x - x1)
+     * (x2-x1) * y - y1 * (x2-x1) = (y2-y1) * x - x1(y2-y1)
+     * (y2-y1) * x + (x1 - x2) * y + y1 * (x2-x1) - x1 * (y2-y1) = 0
+     * for variable x, y
+    */
+    // Need to scale
+    y1 = p1["la"]
+    y2 = p2["la"]
+    x1 = p1["lo"]
+    x2 = p1["lo"]
+    y = source["la"]
+    x = source["lo"]
+    if (Math.abs(p1["la"] - p2["la"]) < eps)
+        unnormalized_distance = Math.abs(p1["la"] - source["la"])
+    else if (Math.abs(p1["lo"] - p2["lo"]) < eps)
+        unnormalized_distance = Math.abs(p2["la"] - source["lo"])
+    else
+        unnormalized_distance = Math.abs((y2 - y1) * x + (x1 - x2) * y + y1 * (x2 - x1) - x1 * (y2 - y1)) / Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2))
+    normalized_distance = factor * unnormalized_distance;
+    // How do we find the function? TODO
+    return normalized_distance
+}
+
 function generateWeight(g) {
     var riskValue = [];
     // population = getRandomCrowd(28.6213, 28.6680, 77.1412, 77.2135, 1000);
     var population = require('./data/infected.json');
     // Power simulation for our infected person
     var power = 100;
+    var closeness = 1000
     for (var i = 0; i < graph.length; i++) {
         var g_ = graph[i];
         var curr_risk = 0;
@@ -122,18 +158,18 @@ function generateWeight(g) {
             for (var k = 0; k < Object.keys(adj_list_node).length; k++) {
                 // console.log(adj_list_node[k]);
                 coordinates = {"la": graph[adj_list_node[k].i].la, "lo": graph[adj_list_node[k].i].lo}
-                curr_risk += find_angle({"la": graph[i].la, "lo": graph[i].lo}, coordinates, population[j]) * power / (Math.PI * 2)
-                
+                curr_risk += (find_angle({"la": graph[i].la, "lo": graph[i].lo}, coordinates, population[j]) * power*closeness/dist_contrib({"la": graph[i].la, "lo": graph[i].lo}, coordinates, population[j])  )/ (Math.PI * 2)
+                // console.log(closeness/dist_contrib({"la": graph[i].la, "lo": graph[i].lo}, coordinates, population[j]));
+           
             }
-            // if(i<30)
-            // console.log(curr_risk);
+            
         }
         riskValue.push(curr_risk);
     }
-    console.log(riskValue);
+    // console.log(riskValue);
 
     var newGraph = [];
-    lambda = 0.01 // Change this accordingly
+    lambda = 0.1 // Change this accordingly
     for (var i = 0; i < Object.keys(g).length; i++) {
         var adjlist = [];
         var child = g[i].e;
