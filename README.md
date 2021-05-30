@@ -12,7 +12,11 @@ Consists of Java program that parses OSM (OpenStreetMap) XML files into json gra
 * This can be treated as a black-box or a tool to get the nodes of the graph in the locality.
 
 ## Instructions
-To be done
+* Follow the steps:
+```shell
+npm install
+npm start
+```
 
 ## Implementation
 * `index.js` is the master file.
