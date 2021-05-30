@@ -4,6 +4,9 @@ The project aims to aid safe travelling for people by providing the safest path 
 
 Currently the implementation only consists of the locality in Delhi, but it can further implemented such that it takes the locality of the user as a parameter.
 
+### DEMO VIDEO
+https://youtu.be/lcXM4QS5a_Y
+
 ### graph-parser-osm
 Consists of Java program that parses OSM (OpenStreetMap) XML files into json graph representation.
 
@@ -12,7 +15,11 @@ Consists of Java program that parses OSM (OpenStreetMap) XML files into json gra
 * This can be treated as a black-box or a tool to get the nodes of the graph in the locality.
 
 ## Instructions
-To be done
+* Follow the steps:
+```shell
+npm install
+npm start
+```
 
 ## Implementation
 * `index.js` is the master file.
