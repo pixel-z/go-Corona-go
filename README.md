@@ -4,6 +4,8 @@ The project aims to aid safe travelling for people by providing the safest path 
 
 Currently the implementation only consists of the locality in Delhi, but it can further implemented such that it takes the locality of the user as a parameter.
 
+![UI](./images/app.png)
+
 ### DEMO VIDEO
 https://youtu.be/lcXM4QS5a_Y
 
@@ -16,8 +18,17 @@ Consists of Java program that parses OSM (OpenStreetMap) XML files into json gra
 
 ## Instructions
 * Follow the steps:
+1. Both in parent as well as in covi-secure directory
 ```shell
-npm install
+npm install 
+```
+2. Open two terminal windows:
+- In one window stay in the parent directory & run:
+```
+nodemon
+```
+In other window, open covi-secure directory & run:
+```
 npm start
 ```
 
@@ -62,4 +73,4 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 
 ### Locality for which it is tested
 
-![Locality](./map.png)
+![Locality](./images/map.png)
